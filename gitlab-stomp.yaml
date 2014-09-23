@@ -1,0 +1,22 @@
+---
+# Stomp connection options.
+#
+stompconnector:
+  :reliable: true
+  :hosts:
+  - :login: broker-user
+    :passcode: broker-password
+    :host: broker01
+    :port: 61613
+    :ssl: false
+  - :login: broker-user
+    :passcode: broker-password
+    :host: broker02
+    :port: 61613
+    :ssl: false
+
+#
+# Topics:
+trigger-topic: future.git.commits
+report-topic: future.events.gitlab
+
