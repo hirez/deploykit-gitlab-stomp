@@ -23,10 +23,15 @@ Installation.
 =============
 
 You will need:
+
 A recent Ruby. Not 1.8.x
+
 Bundler.
+
 Nginx.
+
 A STOMP broker.
+
 
 'nginx-vhost' contains, remarkably enough, a Nginx vhost.
 'initscript' contains, well, take a guess.
