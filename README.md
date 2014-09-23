@@ -51,5 +51,8 @@ You will need to fiddle with the YAML config in order to insert your own STOMP b
 probably think about changing the topic names to something that doesn't begin with 'future'.
 
 future.git.commits is the topic that the machines watch.
+
 future.events.gitlab is the human-readable version. There's code elsewhere to gateway that to an IRC channel. It would be 
-relatively trivial to emit that data to XMPP or some dashboard malarkey that looks like a Bloomberg terminal. Ha ha! BUSINESS!
+relatively trivial to emit that data to XMPP or some dashboard malarkey that looks like a Bloomberg terminal. 
+
+Ha ha! BUSINESS!
