@@ -30,7 +30,9 @@ post '/' do
     oldrev = push['before']
     newrev = push['after']
     refname = push['ref']
-  
+    user = push['user_name']
+    repo_homepage = push['repository']['homepage']
+
     subject = "[#{reponame}] #{refname} #{newrev}"
     body = "repo: #{reponame}\noldrev: #{oldrev}\nnewrev: #{newrev}\nrefname: #{refname}\n"
 
@@ -42,8 +44,12 @@ post '/' do
     client = Stomp::Client.new(stompconnector)
     if client
       client.publish("/topic/#{trigger_topic}",body, {:subject => subject})
-      eventdetail = "#{subject} (webhook)"
+
+      # Create a more human friendly version of the published events that include a url to the latest change
+      # Example: John Smith pushed 4 commit(s) to myrepo - http://gitlab.example.org/myrepo/commits/da1560886d4f094c3e6c9ef40349f7d38b5d27d7
+      eventdetail = "#{user} pushed #{push['commits'].length} commit(s) to #{reponame} - #{repo_homepage}/commits/#{newrev} (webhook)"
       client.publish("/topic/#{report_topic}",eventdetail, {:subject => "Talking to eventbot"})
+      
       Syslog.info("Pushed change: %s",subject)
       client.close
     end
@@ -52,8 +58,12 @@ post '/' do
     source = push['object_attributes']['source_branch']
     target = push['object_attributes']['target_branch']
     state = push['object_attributes']['state']
+    user = push['user']['name']
+    sourcerepo = push['object_attributes']['source']['namespace']
+    targetrepo = push['object_attributes']['target']['namespace']
 
-    eventdetail = "Merge request: #{source} -> #{target} #{state}"
+    # Amazingly, its really hard to work out what the Merge Request url is
+    eventdetail = "Merge request (#{push['object_attributes']['title']}) #{state} by #{user}: #{sourcerepo}:#{source} -> #{targetrepo}:#{target}"
 
     client = Stomp::Client.new(stompconnector)
     if client
