@@ -65,11 +65,23 @@ post '/' do
 
   when 'merge_request'
     source = push['object_attributes']['source_branch']
+    sourcerepo = 'unknown'
     target = push['object_attributes']['target_branch']
+    targetrepo = 'unknown'
     state = push['object_attributes']['state']
-    user = push['user']['name']
-    sourcerepo = push['object_attributes']['source']['namespace']
-    targetrepo = push['object_attributes']['target']['namespace']
+    user = 'unknown'
+
+    # Users only exist in gitlab 7.5.0+
+    if !push['user'].nil?
+      user = push['user']['name']
+    end
+    # Source and target only exists in 7.4.0+
+    if !push['object_attributes']['source'].nil?
+      sourcerepo = push['object_attributes']['source']['namespace']
+    end
+    if !push['object_attributes']['target'].nil?
+      targetrepo = push['object_attributes']['target']['namespace']
+    end
 
     # Amazingly, its really hard to work out what the Merge Request url is
     eventdetail = "Merge request (#{push['object_attributes']['title']}) #{state} by #{user}: #{sourcerepo}:#{source} -> #{targetrepo}:#{target}"
